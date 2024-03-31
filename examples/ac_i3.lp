@@ -1,0 +1,11 @@
+argument(b).
+argument(c).
+argument(e).
+attack(a,b).
+attack(b,c).
+attack(d,c).
+attack(d,e).
+attack(e,d).
+argument(a).
+argument(d).
+attack(c,b).

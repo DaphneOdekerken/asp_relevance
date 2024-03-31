@@ -1,0 +1,14 @@
+argument(b).
+argument(c).
+argument(e).
+att(a,b).
+att(b,c).
+att(d,c).
+att(d,e).
+att(e,d).
+uarg(a).
+uarg(d).
+uatt(c,b).
+topic(b).
+topic(c).
+topic(e).
