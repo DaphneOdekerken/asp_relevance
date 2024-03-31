@@ -27,6 +27,8 @@ class CompleteRelevanceSolver:
         completion_control, guess_control = \
             self._init_clingo(iaf_file, topic, label)
 
+        completions_tried = 0
+
         # Line 4.
         while True:
             # Line 5.
@@ -37,6 +39,8 @@ class CompleteRelevanceSolver:
 
             # Line 6.
             if self.last_model:
+                completions_tried += 1
+                print(completions_tried)
                 # Line 7 and 8: get the completion corresponding to last_model.
                 last_completion_arguments, last_completion_attacks = \
                     self._get_guessed_completion()

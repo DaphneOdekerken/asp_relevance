@@ -19,10 +19,12 @@ class GroundedRelevanceSolver:
         control.load(str(PATH_TO_ENCODINGS / 'grounded.dl'))
         control.load(str(PATH_TO_ENCODINGS / 'labels.dl'))
         control.load(str(PATH_TO_ENCODINGS / 'guess.dl'))
+        control.load(str(PATH_TO_ENCODINGS / 'valid_completion.dl'))
         control.load(str(PATH_TO_ENCODINGS / 'grounded_relevant_args.dl'))
         control.load(str(PATH_TO_ENCODINGS / 'query_arg.dl'))
         control.load(str(PATH_TO_ENCODINGS / 'grounded_relevant_atts.dl'))
         control.load(str(PATH_TO_ENCODINGS / 'query_att.dl'))
+        control.load(str(PATH_TO_ENCODINGS / 'reachable.dl'))
         control.ground([('base', [])], context=self)
         with control.solve(on_model=self.on_model, async_=True) as handle:
             handle.wait(5)
