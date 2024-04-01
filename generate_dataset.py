@@ -3,8 +3,9 @@ import random
 
 nr_of_arguments_list = [50, 100, 150, 200, 250]
 ratio_of_defeats_list = [1, 1.5, 2]
-nr_of_argumentation_frameworks = 50
-ratio_uncertain_list = [0.05, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40]
+nr_of_argumentation_frameworks = 10
+ratio_uncertain_list = [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40]
+nr_topics = 1
 
 DATA_SET_FOLDER = pathlib.Path('generated')
 
@@ -21,19 +22,18 @@ for nr_of_arguments in nr_of_arguments_list:
                             f'{str(nr_of_argumentation_framework)}.pl'
                 with open(DATA_SET_FOLDER / file_name, 'w') as write_file:
                     # First certain arguments are topics
-                    write_file.write(f'topic(a0).\nargument(a0).\n')
-                    write_file.write(f'topic(a1).\nargument(a1).\n')
-                    write_file.write(f'topic(a2).\nargument(a2).\n')
-                    write_file.write(f'topic(a3).\nargument(a3).\n')
-                    write_file.write(f'topic(a4).\nargument(a4).\n')
+                    for topic_index in range(nr_topics):
+                        arg_name = 'a' + str(topic_index)
+                        write_file.write(f'topic({arg_name}).\n')
+                        write_file.write(f'argument({arg_name}).\n')
 
                     # For the remaining arguments, we partition into certain
                     # and uncertain.
                     nr_uncertain_arguments = \
                         int(ratio_uncertain * nr_of_arguments)
                     shuffle_arguments = \
-                        random.sample(range(5, nr_of_arguments),
-                                      (nr_of_arguments - 5))
+                        random.sample(range(nr_topics, nr_of_arguments),
+                                      (nr_of_arguments - nr_topics))
                     for argument_index in \
                             shuffle_arguments[:nr_uncertain_arguments]:
                         write_file.write(f'uarg(a{str(argument_index)}).\n')

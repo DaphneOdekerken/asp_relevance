@@ -19,6 +19,7 @@ class StabilitySolver:
         control.load(str(PATH_TO_ENCODINGS / 'grounded.dl'))
         control.load(str(PATH_TO_ENCODINGS / 'labels.dl'))
         control.load(str(PATH_TO_ENCODINGS / 'guess.dl'))
+        control.load(str(PATH_TO_ENCODINGS / 'valid_completion.dl'))
         control.ground([('base', [])], context=self)
         with control.solve(on_model=self.on_model, async_=True) as handle:
             handle.wait(5)

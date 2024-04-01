@@ -16,6 +16,7 @@ class ReachabilitySolver:
         control = clingo.Control()
         control.load(str(iaf_file))
         control.load(str(PATH_TO_ENCODINGS / 'reachable.dl'))
+        control.load(str(PATH_TO_ENCODINGS / 'reachable_filter.dl'))
         control.ground([('base', [])], context=self)
         with control.solve(on_model=self.on_model, async_=True) as handle:
             handle.wait(5)
