@@ -1,6 +1,7 @@
 import clingo
 import pathlib
 
+from reachable_preprocessing import ReachabilityPreprocessor
 
 PATH_TO_ENCODINGS = pathlib.Path('encodings')
 
@@ -14,6 +15,9 @@ class CompleteRelevanceSolver:
 
     def enumerate_complete_credulous_relevant_updates(
             self, iaf_file, label: str, topic: str):
+        file = ReachabilityPreprocessor().enumerate_reachable(iaf_file)
+        iaf_file = file
+
         # Parse input so that we can iterate over uncertain arguments/attacks.
         self._parse_input(iaf_file)
 
@@ -40,7 +44,7 @@ class CompleteRelevanceSolver:
             # Line 6.
             if self.last_model:
                 completions_tried += 1
-                print(completions_tried)
+                # print(completions_tried)
                 # Line 7 and 8: get the completion corresponding to last_model.
                 last_completion_arguments, last_completion_attacks = \
                     self._get_guessed_completion()
@@ -71,7 +75,7 @@ class CompleteRelevanceSolver:
                                 completion_control, new_arguments,
                                 last_completion_attacks)
                         if removal_of_argument_is_relevant:
-                            relevant_attacks_to_remove.add(
+                            relevant_arguments_to_remove.add(
                                 query_uncertain_argument)
 
                 # Line 9 (for uncertain attacks).

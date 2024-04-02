@@ -35,7 +35,7 @@ class GroundedRelevanceSolver:
         self.grounding_time = end_grounding_time - start_grounding_time
 
         with control.solve(on_model=self.on_model, async_=True) as handle:
-            handle.wait(5)
+            handle.wait(60)
             handle.cancel()
 
 
