@@ -73,7 +73,4 @@ class GroundedRelevanceWithPreprocessingSolver:
         control.ground([('base', [])], context=self)
         self.end_grounding_time = time.time()
 
-        with control.solve(on_model=self.on_model, async_=True,
-                           on_finish=self.save_finished) as handle:
-            handle.wait(60)
-            handle.cancel()
+        control.solve(on_model=self.on_model, on_finish=self.save_finished)
