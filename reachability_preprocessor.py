@@ -17,9 +17,7 @@ class ReachabilityPreprocessor:
         control.load(str(iaf_file))
         control.load(str(PATH_TO_ENCODINGS / 'reachable_preprocessing.dl'))
         control.ground([('base', [])], context=self)
-        with control.solve(on_model=self.on_model, async_=True) as handle:
-            handle.wait(5)
-            handle.cancel()
+        control.solve(on_model=self.on_model)
         with open('temp.lp', 'w') as writer:
             writer.write('topic(a0).\n')
             if self.last_model:

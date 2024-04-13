@@ -1,14 +1,16 @@
 import pathlib
 import random
 
-nr_of_arguments_list = [5, 10, 15, 20, 25]
-nr_of_arguments_list = [50, 100, 150, 200, 250]
+nr_of_arguments_list = [5, 10, 15, 20, 25, 50, 100, 150, 200, 250]
 ratio_of_defeats_list = [1.5]
 nr_of_argumentation_frameworks = 25
 ratio_uncertain_list = [0.10, 0.20, 0.30, 0.40]
 nr_topics = 1
 
 DATA_SET_FOLDER = pathlib.Path('generated')
+
+if not DATA_SET_FOLDER.exists():
+    DATA_SET_FOLDER.mkdir()
 
 for nr_of_arguments in nr_of_arguments_list:
     for ratio_of_defeats in ratio_of_defeats_list:
