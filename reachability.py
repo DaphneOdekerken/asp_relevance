@@ -18,9 +18,7 @@ class ReachabilitySolver:
         control.load(str(PATH_TO_ENCODINGS / 'reachable.dl'))
         control.load(str(PATH_TO_ENCODINGS / 'reachable_filter.dl'))
         control.ground([('base', [])], context=self)
-        with control.solve(on_model=self.on_model, async_=True) as handle:
-            handle.wait(5)
-            handle.cancel()
+        control.solve(on_model=self.on_model)
 
 
 if __name__ == '__main__':

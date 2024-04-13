@@ -2,9 +2,28 @@ import os
 import pathlib
 import time
 
+from multiprocessing import Process, Queue
+from queue import Empty
+
 from grounded_stability import StabilitySolver
 from reachability import ReachabilitySolver
-from reachable_preprocessing import GroundedRelevanceWithPreprocessingSolver
+from grounded_relevance import GroundedRelevanceWithPreprocessingSolver
+
+
+SECONDS_UNTIL_TIMEOUT = 60
+
+
+def run_single_experiment(iat_file, with_preprocess: bool, queue):
+    solver = GroundedRelevanceWithPreprocessingSolver()
+    solver.enumerate_grounded_relevant_updates(
+        iat_file, with_preprocess)
+
+    nr_relevant_items = len(solver.last_model)
+    preprocessing_time = solver.end_preprocessing_time - \
+        solver.start_preprocessing_time
+    grounding_time = solver.end_grounding_time - solver.start_grounding_time
+
+    queue.put((nr_relevant_items, preprocessing_time, grounding_time))
 
 
 def run_grounded_relevance_experiments():
@@ -12,20 +31,20 @@ def run_grounded_relevance_experiments():
               'w') as write_file_h1:
         write_file_h1.write(f'Arguments;Attacks;PercentageIncomplete;Index;'
                             f'Runtime;PreprocessingTime;GroundingTime;'
-                            f'FirstModelTime;Timeout;NrRelevant;'
+                            f'Timeout;NrRelevant;'
                             f'NrReachable;StabilityTime;StabilityStatus\n')
     with open(pathlib.Path('experiment_results') / 'grounded_rel_pp.csv',
               'w') as write_file_h2:
         write_file_h2.write(
             f'Arguments;Attacks;PercentageIncomplete;Index;'
             f'Runtime;PreprocessingTime;GroundingTime;'
-            f'FirstModelTime;Timeout;NrRelevant;'
+            f'Timeout;NrRelevant;'
             f'NrReachable;StabilityTime;StabilityStatus\n')
     with os.scandir('generated') as entries:
         for iat_file in entries:
             print(iat_file.path)
 
-            # Reachability
+            # Reachability: count number of reachable
             nr_reachable_items = 0
             solver = ReachabilitySolver()
             solver.enumerate_reachable(iat_file.path)
@@ -50,62 +69,60 @@ def run_grounded_relevance_experiments():
                 stability_status = 'Unstable'
 
             for with_preprocess in [True, False]:
-                grounding_t = ''
-                start_to_first_model_t = ''
-                timeout = 0
-
                 if with_preprocess:
                     filename = 'grounded_rel_pp.csv'
                 else:
                     filename = 'grounded_rel.csv'
 
                 start_time = time.time()
-                solver = GroundedRelevanceWithPreprocessingSolver()
-                solver.enumerate_grounded_relevant_updates(
-                    iat_file.path, with_preprocess)
-                end_time = time.time()
-                print(end_time - start_time)
 
-                preprocessing_time = \
-                    solver.end_preprocessing_time - \
-                    solver.start_preprocessing_time
-                print(f'Preprocessing time: {preprocessing_time}')
-                preprocessing_t = str(preprocessing_time).replace('.', ',')
-
-                if solver.end_grounding_time:
-                    grounding_time = solver.end_grounding_time - \
-                                     solver.start_grounding_time
-                    print(f'Grounding time: {grounding_time}')
+                # Create the shared queue
+                queue = Queue()
+                # Configure the child process
+                process = Process(
+                    target=run_single_experiment,
+                    args=(iat_file.path, with_preprocess, queue,))
+                # Start the child process
+                process.start()
+                # Wait for the result with a timeout
+                try:
+                    # Get the result from the queue
+                    nr_relevant_items, preprocessing_time, grounding_time = \
+                        queue.get(timeout=SECONDS_UNTIL_TIMEOUT)
+                    preprocessing_t = str(preprocessing_time).replace('.', ',')
                     grounding_t = str(grounding_time).replace('.', ',')
+                    timed_out = 0
 
-                if solver.first_model_time:
-                    start_to_first_model_time = \
-                        solver.first_model_time - start_time
-                    print(f'Time to first model: '
-                          f'{start_to_first_model_time}')
-                    start_to_first_model_t = str(
-                        start_to_first_model_time).replace('.', ',')
+                    # Stop the clock!
+                    end_time = time.time()
+                    duration_t = str(end_time - start_time).replace('.', ',')
+                    print('Total time: ' + duration_t)
 
-                if solver.finished_time is None:
-                    timeout = 1
+                    print('Nr of relevant items: ' + str(nr_relevant_items))
+                    print('NO TIMEOUT')
+                except Empty:
+                    # No result in time limit, terminate
+                    process.terminate()
+                    # return no result
+                    print('TIMEOUT')
 
-                nr_of_relevant_items = 0
-                if solver.last_model:
-                    nr_of_relevant_items = len(solver.last_model)
-                print(f'Nr relevant: {nr_of_relevant_items}')
+                    duration_t = ''
+                    nr_relevant_items = ''
+                    preprocessing_t = ''
+                    grounding_t = ''
+                    timed_out = 1
 
                 _, nr_args, nr_atts, perc_inc, _, _, index = \
                     iat_file.path.split('_', 7)
                 index = index.split('.', 1)[0]
-                duration_t = str(end_time - start_time).replace('.', ',')
 
                 with open(pathlib.Path('experiment_results') / filename, 'a') \
                         as write_file:
                     write_file.write(
                         f'{nr_args};{nr_atts};{perc_inc};{index};'
                         f'{duration_t};{preprocessing_t};{grounding_t};'
-                        f'{start_to_first_model_t};{timeout};'
-                        f'{nr_of_relevant_items};{nr_reachable_items};'
+                        f'{timed_out};'
+                        f'{nr_relevant_items};{nr_reachable_items};'
                         f'{stability_time};{stability_status}\n')
 
 

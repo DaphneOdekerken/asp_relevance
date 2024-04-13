@@ -1,7 +1,7 @@
 import clingo
 import pathlib
 
-from reachable_preprocessing import ReachabilityPreprocessor
+from grounded_relevance import ReachabilityPreprocessor
 
 PATH_TO_ENCODINGS = pathlib.Path('encodings')
 
