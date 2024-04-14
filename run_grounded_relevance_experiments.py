@@ -11,6 +11,7 @@ from grounded_relevance import GroundedRelevanceWithPreprocessingSolver
 
 
 SECONDS_UNTIL_TIMEOUT = 60
+EXPERIMENT_RESULTS_FOLDER = pathlib.Path('experiment_results')
 
 
 def run_single_experiment(iat_file, with_preprocess: bool, queue):
@@ -27,13 +28,14 @@ def run_single_experiment(iat_file, with_preprocess: bool, queue):
 
 
 def run_grounded_relevance_experiments():
-    with open(pathlib.Path('experiment_results') / 'grounded_rel.csv',
-              'w') as write_file_h1:
+    if not EXPERIMENT_RESULTS_FOLDER.exists():
+        EXPERIMENT_RESULTS_FOLDER.mkdir()
+    with open(EXPERIMENT_RESULTS_FOLDER / 'grounded_rel.csv', 'w') as write_file_h1:
         write_file_h1.write(f'Arguments;Attacks;PercentageIncomplete;Index;'
                             f'Runtime;PreprocessingTime;GroundingTime;'
                             f'Timeout;NrRelevant;'
                             f'NrReachable;StabilityTime;StabilityStatus\n')
-    with open(pathlib.Path('experiment_results') / 'grounded_rel_pp.csv',
+    with open(EXPERIMENT_RESULTS_FOLDER / 'grounded_rel_pp.csv',
               'w') as write_file_h2:
         write_file_h2.write(
             f'Arguments;Attacks;PercentageIncomplete;Index;'

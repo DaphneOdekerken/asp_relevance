@@ -1,0 +1,7 @@
+from generate_dataset import generate_dataset
+from run_complete_credulous_relevance_experiments import run_complete_relevance_experiments
+from run_grounded_relevance_experiments import run_grounded_relevance_experiments
+
+generate_dataset()
+run_grounded_relevance_experiments()
+run_complete_relevance_experiments()

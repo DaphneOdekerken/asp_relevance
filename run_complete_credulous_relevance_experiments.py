@@ -8,6 +8,7 @@ from complete_credulous_relevance import CompleteRelevanceSolver
 
 
 SECONDS_UNTIL_TIMEOUT = 60
+EXPERIMENT_RESULTS_FOLDER = pathlib.Path('experiment_results')
 
 
 def run_single_complete_credulous_relevance_experiment(iat_file, queue):
@@ -24,7 +25,9 @@ def run_single_complete_credulous_relevance_experiment(iat_file, queue):
 
 
 def run_complete_relevance_experiments():
-    with open(pathlib.Path('experiment_results') / 'complete_rel.csv',
+    if not EXPERIMENT_RESULTS_FOLDER.exists():
+        EXPERIMENT_RESULTS_FOLDER.mkdir()
+    with open(EXPERIMENT_RESULTS_FOLDER / 'complete_rel.csv',
               'w') as write_file_h1:
         write_file_h1.write(f'Arguments;Attacks;PercentageIncomplete;Index;'
                             f'Runtime;Timeout;NrRelevant\n')
