@@ -31,7 +31,7 @@ def run_complete_relevance_experiments():
               'w') as write_file_h1:
         write_file_h1.write(f'Arguments;Attacks;PercentageIncomplete;Index;'
                             f'Runtime;Timeout;NrRelevant\n')
-    with os.scandir('generated') as entries:
+    with os.scandir('generated_complete') as entries:
         for iat_file in entries:
             print(iat_file.path)
 
@@ -69,7 +69,7 @@ def run_complete_relevance_experiments():
                 timed_out = 1
 
             _, nr_args, nr_atts, perc_inc, _, _, index = \
-                iat_file.path.split('_', 7)
+                iat_file.name.split('_', 7)
             index = index.split('.', 1)[0]
 
             with open(pathlib.Path('experiment_results') / 'complete_rel.csv',

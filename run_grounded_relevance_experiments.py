@@ -42,7 +42,7 @@ def run_grounded_relevance_experiments():
             f'Runtime;PreprocessingTime;GroundingTime;'
             f'Timeout;NrRelevant;'
             f'NrReachable;StabilityTime;StabilityStatus\n')
-    with os.scandir('generated') as entries:
+    with os.scandir('generated_grounded') as entries:
         for iat_file in entries:
             print(iat_file.path)
 
@@ -115,7 +115,7 @@ def run_grounded_relevance_experiments():
                     timed_out = 1
 
                 _, nr_args, nr_atts, perc_inc, _, _, index = \
-                    iat_file.path.split('_', 7)
+                    iat_file.name.split('_', 7)
                 index = index.split('.', 1)[0]
 
                 with open(pathlib.Path('experiment_results') / filename, 'a') \

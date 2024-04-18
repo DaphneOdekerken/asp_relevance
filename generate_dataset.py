@@ -1,19 +1,14 @@
-import pathlib
 import random
 
 
-DATA_SET_FOLDER = pathlib.Path('generated')
-
-
-def generate_dataset():
-    nr_of_arguments_list = [5, 10, 15, 20, 25, 50, 100, 150, 200, 250]
+def generate_dataset(folder, nr_of_arguments_list):
     ratio_of_defeats_list = [1.5]
     nr_of_argumentation_frameworks = 25
     ratio_uncertain_list = [0.10, 0.20, 0.30, 0.40]
     nr_topics = 1
 
-    if not DATA_SET_FOLDER.exists():
-        DATA_SET_FOLDER.mkdir()
+    if not folder.exists():
+        folder.mkdir()
 
     for nr_of_arguments in nr_of_arguments_list:
         for ratio_of_defeats in ratio_of_defeats_list:
@@ -26,7 +21,7 @@ def generate_dataset():
                                 f'{str(int(ratio_uncertain * 100))}_' \
                                 'args_atts_' \
                                 f'{str(nr_of_argumentation_framework)}.pl'
-                    with open(DATA_SET_FOLDER / file_name, 'w') as write_file:
+                    with open(folder / file_name, 'w') as write_file:
                         # First certain arguments are topics
                         for topic_index in range(nr_topics):
                             arg_name = 'a' + str(topic_index)
@@ -65,7 +60,3 @@ def generate_dataset():
                         for defeat_i in shuffle_defeats[nr_of_uncertain_defeats:]:
                             write_file.write(f'att(a{str(defeats[defeat_i][0])},'
                                              f'a{str(defeats[defeat_i][1])}).\n')
-
-
-if __name__ == "__main__":
-    generate_dataset()
