@@ -104,7 +104,7 @@ class CompleteRelevanceSolver:
                             relevant_attacks_to_remove.add(
                                 query_uncertain_attack)
 
-                # Line 22: refine the original solver.
+                # Line 22: refine the original grounded_solver.
                 self._refine_guess_control(guess_control,
                                            last_completion_arguments,
                                            last_completion_attacks)
@@ -227,7 +227,7 @@ class CompleteRelevanceSolver:
                               clingo.Function(uatt[1])])
             completion_control.assign_external(new_a, True)
             externals_to_remove_later.append(new_a)
-        # Run solver for completion.
+        # Run grounded_solver for completion.
         completion_control.solve(on_model=self._store_satisfiable)
 
         # Check satisfiability and store result.

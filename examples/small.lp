@@ -6,3 +6,5 @@ uarg(c).
 att(b,a).
 att(c,b).
 uatt(c,c).
+topic(a).
+topic(d).

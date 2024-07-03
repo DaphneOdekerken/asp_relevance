@@ -5,7 +5,7 @@ import pathlib
 PATH_TO_ENCODINGS = pathlib.Path('encodings')
 
 
-class GroundedStabilitySolver:
+class CompleteScepticalStabilitySolver:
     def __init__(self):
         self.last_model = None
 
@@ -16,7 +16,7 @@ class GroundedStabilitySolver:
         control = clingo.Control(arguments=['--enum-mode=cautious'])
         control.load(str(iaf_file))
         control.load(str(PATH_TO_ENCODINGS / 'stability_filter.lp'))
-        control.load(str(PATH_TO_ENCODINGS / 'grounded.dl'))
+        control.load(str(PATH_TO_ENCODINGS / 'complete.dl'))
         control.load(str(PATH_TO_ENCODINGS / 'labels.dl'))
         control.load(str(PATH_TO_ENCODINGS / 'guess.dl'))
         control.load(str(PATH_TO_ENCODINGS / 'valid_completion.dl'))
@@ -26,7 +26,7 @@ class GroundedStabilitySolver:
 
 if __name__ == '__main__':
     example = pathlib.Path('examples') / 'small.lp'
-    solver = GroundedStabilitySolver()
+    solver = CompleteScepticalStabilitySolver()
     solver.enumerate_stable_arguments(example)
     for symbols in solver.last_model:
         print(str(symbols))

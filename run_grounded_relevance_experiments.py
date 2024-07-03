@@ -5,7 +5,7 @@ import time
 from multiprocessing import Process, Queue
 from queue import Empty
 
-from grounded_stability import StabilitySolver
+from grounded_stability import GroundedStabilitySolver
 from reachability import ReachabilitySolver
 from grounded_relevance import GroundedRelevanceWithPreprocessingSolver
 
@@ -56,7 +56,7 @@ def run_grounded_relevance_experiments():
 
             # Stability
             start_time = time.time()
-            solver = StabilitySolver()
+            solver = GroundedStabilitySolver()
             solver.enumerate_stable_arguments(iat_file.path)
             end_time = time.time()
             stability_time = (end_time - start_time)
