@@ -5,7 +5,8 @@ from multiprocessing import Queue, Process
 from queue import Empty
 
 from complete_credulous_relevance import CompleteRelevanceSolver
-
+from complete_credulous_stability import CompleteCredulousStabilitySolver
+from reachability import ReachabilitySolver
 
 SECONDS_UNTIL_TIMEOUT = 60
 EXPERIMENT_RESULTS_FOLDER = pathlib.Path('experiment_results')
@@ -30,10 +31,30 @@ def run_complete_relevance_experiments():
     with open(EXPERIMENT_RESULTS_FOLDER / 'complete_rel.csv',
               'w') as write_file_h1:
         write_file_h1.write(f'Arguments;Attacks;PercentageIncomplete;Index;'
-                            f'Runtime;Timeout;NrRelevant\n')
+                            f'Runtime;Timeout;NrRelevant;'
+                            f'NrReachable;StabilityTime;StabilityStatus\n')
     with os.scandir('generated_complete') as entries:
         for iat_file in entries:
             print(iat_file.path)
+
+            # Reachability: count number of reachable
+            nr_reachable_items = 0
+            solver = ReachabilitySolver()
+            solver.enumerate_reachable(iat_file.path)
+            if solver.last_model:
+                nr_reachable_items = len(solver.last_model)
+            print(f'Nr reachable: {nr_reachable_items}')
+
+            # Stability
+            start_time = time.time()
+            solver = CompleteCredulousStabilitySolver()
+            complete_credulous_stable = \
+                solver.get_complete_credulous_stability(iat_file.path,
+                                                        'in', 'a0')
+            end_time = time.time()
+            stability_time = (end_time - start_time)
+            print(f'Stability-time: {stability_time}')
+            stability_time = str(stability_time).replace('.', ',')
 
             start_time = time.time()
 
@@ -76,7 +97,9 @@ def run_complete_relevance_experiments():
                       'a') as write_file:
                 write_file.write(
                     f'{nr_args};{nr_atts};{perc_inc};{index};'
-                    f'{duration_t};{timed_out};{nr_relevant_items}\n')
+                    f'{duration_t};{timed_out};{nr_relevant_items};'
+                    f'{nr_reachable_items};{stability_time};'
+                    f'{complete_credulous_stable}\n')
 
 
 if __name__ == '__main__':
